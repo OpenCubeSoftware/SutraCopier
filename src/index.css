@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: "cwTeXQKaiZHMedium";
+  src: local("cwTeXQKaiZHMedium"), url("./fonts/cwTeXQKaiZH-Medium.ttf") format('truetype');
+}

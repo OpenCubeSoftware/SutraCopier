@@ -40,3 +40,9 @@
 button {
   font-size: calc(10px + 2vmin);
 }
+
+.font-face-kt {
+  font-family: "cwTeXQKaiZHMedium";
+  font-weight: normal;
+  font-size: 5rem;
+}

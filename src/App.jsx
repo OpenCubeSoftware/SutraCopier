@@ -1,45 +1,36 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import './App.css';
+import {useEffect, useState} from 'react';
+import {useEffectOnce} from "usehooks-ts";
+import {Box, Grid} from "@mui/material";
+import {invoke} from "@tauri-apps/api";
+import IndexScreen from "./screens/IndexScreen";
+import SecondScreen from "./screens/SecondScreen";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData ] = useState(0);
+  const [page, setPage] = useState("index");
+
+  useEffectOnce(() => {
+    invoke('get_files').then((files) => setData(files));
+  })
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+    <>
+      <button onClick={() => {
+        if (page === 'index') {
+          setPage('second');
+        } else if (page === 'second') {
+          setPage('index');
+        }
+      }}>Change screen</button>
+      {page === 'index' &&
+        <IndexScreen val={data} />
+      }
+      {page === 'second' &&
+        <SecondScreen />
+      }
+    </>
+  );
 }
 
-export default App
+export default App;

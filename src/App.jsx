@@ -3,11 +3,11 @@ import {useEffect, useMemo, useState} from 'react';
 import {useEffectOnce} from "usehooks-ts";
 import {Box, Button, Grid} from "@mui/material";
 import {invoke} from "@tauri-apps/api";
-import IndexScreen from "./screens/IndexScreen";
+import IndexScreen from "./screens/IndexScreen/IndexScreen.jsx";
 import SecondScreen from "./screens/SecondScreen";
 
 function App() {
-  const [data, setData ] = useState([]);
+  const [data, setData] = useState([]);
   const [page, setPage] = useState("index");
 
   useEffectOnce(() => {
@@ -28,24 +28,15 @@ function App() {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Button variant="contained" color="primary" onClick={() => {
-            if (page === 'index') {
-              setPage('second');
-            } else if (page === 'second') {
-              setPage('index');
-            }
-          }}>Change screen</Button>
-        </Grid>
-        <Grid item xs={6}>
-          <Button color="primary" onClick={() => console.log(sutras)}>Show sutra data</Button>
-        </Grid>
-        <Grid item xs={12}>{page === 'index' &&
+
+        <Grid item xs={12}>
+        {page === 'index' &&
           <IndexScreen val={data}/>
         }
-          {page === 'second' &&
+        {page === 'second' &&
             <SecondScreen/>
-          }</Grid>
+        }
+        </Grid>
       </Grid>
     </>
   );

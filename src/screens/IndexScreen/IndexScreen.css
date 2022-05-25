@@ -1,0 +1,15 @@
+.main-box {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px;
+  background-image: url('../../img/BorderDesign600.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  /*background-position: center center;*/
+}
+
+.heading {
+  color: #fff;
+}
+

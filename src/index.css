@@ -16,3 +16,8 @@ code {
   font-family: "cwTeXQKaiZHMedium";
   src: local("cwTeXQKaiZHMedium"), url("./fonts/cwTeXQKaiZH-Medium.ttf") format('truetype');
 }
+
+@font-face {
+  font-family: "Fondamento";
+  src: local("Fondamento"), url("./fonts/Fondamento-Regular.ttf") format('truetype');
+}

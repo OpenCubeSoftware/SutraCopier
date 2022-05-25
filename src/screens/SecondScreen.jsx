@@ -10,7 +10,7 @@ const SecondScreen = () => {
   })
   return (
     <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-      <h2>Big Purrs</h2>
+      <h2 className="font-fondamento">Big Purrs</h2>
     </Box>
   )
 }

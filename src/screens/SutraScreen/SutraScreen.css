@@ -1,0 +1,42 @@
+.sutra-box {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+    background-image: url('../../img/paper.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.inner-sutra-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    /*padding-top: 20px;*/
+    padding-bottom: 40px;
+}
+
+.sutra-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /*padding: 10px;*/
+    width: 90vh;
+
+}
+
+.sutra-char {
+    font-size: 15rem;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.sutra-title-display {
+    font-size: 2.5rem;
+    margin-top: 15px;
+}
+
+.index-display {
+    font-size: 1.1rem;
+}

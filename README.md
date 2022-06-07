@@ -1,3 +1,5 @@
-# vitejs-vite-tkt44m
+# Sutra Copy Tool
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/vitejs-vite-tkt44m)
+This small program helps you in the Buddhist practice of sutra copying (寫經; Chinese *xie jing*, Japanese *shakyō*).
+
+By displaying one character at a time, you won't get lost! 

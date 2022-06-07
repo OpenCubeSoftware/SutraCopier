@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 const IndexScreen = () => {
   const dispatch = useDispatch();
   const sutraTitles = useSelector((state) => state.sutra.sutraTitles);
-  console.log(sutraTitles);
+
   const handleSelectSutra = (sutraTitle) => {
     dispatch(
       sutraActions.setSelectedSutra(

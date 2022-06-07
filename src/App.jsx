@@ -19,32 +19,6 @@ function App() {
     dispatch(fetchSutras());
   },[dispatch])
 
-/*  const sutras = useMemo(() => {
-    const sutraArray = [];
-    const titles = [];
-    data.forEach(s => {
-      const sutra = JSON.parse(s);
-      titles.push(sutra.title);
-      sutraArray.push({title: sutra.title, characters: sutra.data});
-    })
-    return {titles, sutraArray};
-  }, [data])*/
-
-/*  const selectedSutraData = useMemo(() => {
-    if (isEmpty(selectedSutra)) {
-      return [];
-    }
-    const selected = sutras.sutraArray.filter((s) => s.title === selectedSutra);
-    return selected.sutraData;
-  },[selectedSutra])
-
-  console.log("selected sutra data is: ", selectedSutraData)*/
-
-  // const changePage = (selectedSutra) => {
-  //   setSelectedSutra(selectedSutra);
-  //   setPage('second');
-  // }
-
   return (
     <>
       <Grid container spacing={2}>

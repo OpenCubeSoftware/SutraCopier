@@ -8,6 +8,7 @@ const sutraSlice = createSlice({
     sutras: [],
     selectedSutra: '',
     selectedSutraData: {},
+    sutraIndex: 0
   },
   reducers: {
     setSutraData(state, action) {
@@ -17,9 +18,17 @@ const sutraSlice = createSlice({
     setSelectedSutra(state, action) {
       state.selectedSutra = action.payload.selectedSutra;
       const selectedSutra = state.sutras.find((s) => s.title === action.payload.selectedSutra);
-      console.log("Selected sutra is: ", selectedSutra);
       state.selectedSutraData = selectedSutra;
     },
+    setSutraIndex(state, action) {
+      state.sutraIndex = action.payload.index;
+    },
+    incrementSutraIndex(state) {
+      state.sutraIndex++;
+    },
+    decrementSutraIndex(state) {
+      state.sutraIndex--;
+    }
   }
 })
 

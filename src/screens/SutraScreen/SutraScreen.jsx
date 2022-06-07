@@ -4,17 +4,26 @@ import './SutraScreen.css';
 import {useSelector, useDispatch} from "react-redux";
 import {useState} from "react";
 import {uiActions} from "../../store/ui-slice.js";
+import PropTypes from "prop-types";
+import {invoke} from "@tauri-apps/api";
 
-const SutraScreen = () => {
+const SutraScreen = ({initialIndex, dataStore}) => {
+  console.log("Initial index is", initialIndex.value)
   const sutraData = useSelector((state) => state.sutra.selectedSutraData);
   const totalChars = sutraData.data.length;
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(initialIndex.value ?? 0);
   const buttonRef = useRef(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     buttonRef.current.focus();
+
+    return async () => {
+      // await dataStore.set('sutra-index', {value: index});
+      await invoke('tesst_close');
+    }
   }, []);
+
 
   const backToMenu = () => {
     dispatch(uiActions.setCurrentPage({page: 'index'}));
@@ -38,7 +47,6 @@ const SutraScreen = () => {
     return char?.character ?? 'None';
   }
 
-  console.log("Sutra data is: ", sutraData);
   return (
     <Box className="sutra-box">
 
@@ -68,6 +76,14 @@ const SutraScreen = () => {
 
     </Box>
   )
+}
+
+SutraScreen.propTypes = {
+  initialIndex: PropTypes.number,
+}
+
+SutraScreen.defaultProps = {
+  initialIndex: 0,
 }
 
 export default SutraScreen;

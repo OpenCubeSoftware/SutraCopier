@@ -6,19 +6,10 @@ windows_subsystem = "windows"
 use std::fs;
 use std::ffi::OsStr;
 use std::os::unix::ffi::OsStrExt;
-use tauri_plugin_store::PluginBuilder;
-use std::time::{SystemTime, UNIX_EPOCH};
 use std::format;
 use std::io::Write;
-
-fn get_time() -> u64 {
-    let start = SystemTime::now();
-    let since_the_epoch = start
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
-    since_the_epoch
-}
+use directories::ProjectDirs;
+use serde::{Deserialize, Serialize};
 
 #[tauri::command]
 fn get_files() -> Vec<String>{
@@ -33,19 +24,30 @@ fn get_files() -> Vec<String>{
   file_list
 }
 
+// #[tauri::command]
+// fn tesst_close() {
+//     let time = get_time();
+//     let mut file = std::fs::File::create(format!("./{filename}.meow", filename=time)).expect("File creating failed");
+//     file.write_all("Meow meow meow ".as_bytes()).expect("write failed");
+//     file.write_all(time.to_string().as_bytes()).expect("second write failed");
+//     println!("data written to file");
+// }
+
 #[tauri::command]
-fn tesst_close() {
-    let time = get_time();
-    let mut file = std::fs::File::create(format!("./{filename}.meow", filename=time)).expect("File creating failed");
-    file.write_all("Meow meow meow ".as_bytes()).expect("write failed");
-    file.write_all(time.to_string().as_bytes()).expect("second write failed");
-    println!("data written to file");
+fn persist_settings(settings: String) {
+    let project_dirs = ProjectDirs::from("tk", "opencube", "sutracopy").unwrap();
+    let conf_dir = project_dirs.config_dir();
+    if !conf_dir.exists() {
+        fs::create_dir_all(&conf_dir);
+    }
+    let mut file =
+        std::fs::File::create(&conf_dir.join("settings.sutracopy.conf")).expect("File creating failed");
+    file.write_all(settings.as_bytes()).expect("Write failed");
 }
 
 fn main() {
   tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![get_files, tesst_close])
-      .plugin(PluginBuilder::default().build())
+      .invoke_handler(tauri::generate_handler![get_files, persist_settings])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
 }

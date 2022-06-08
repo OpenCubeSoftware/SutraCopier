@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useEffect, useMemo, useRef} from "react";
 import {Box, Button, Grid, Typography} from '@mui/material';
 import './SutraScreen.css';
 import {useSelector, useDispatch} from "react-redux";
@@ -6,26 +6,34 @@ import {useState} from "react";
 import {uiActions} from "../../store/ui-slice.js";
 import PropTypes from "prop-types";
 import {invoke} from "@tauri-apps/api";
+import {sutraActions} from "../../store/sutra-slice.js";
 
-const SutraScreen = ({initialIndex, dataStore}) => {
-  console.log("Initial index is", initialIndex.value)
+const SutraScreen = () => {
   const sutraData = useSelector((state) => state.sutra.selectedSutraData);
   const totalChars = sutraData.data.length;
-  const [index, setIndex] = useState(initialIndex.value ?? 0);
+  // const [index, setIndex] = useState( 0);
+  const index = useSelector((state) => state.sutra.sutraIndex);
   const buttonRef = useRef(null);
   const dispatch = useDispatch();
+  const indexRef = useRef(0);
+
+  // const sutraSettings = useMemo(() => {
+  //   return JSON.stringify({title: sutraData.title, currentIndex: index});
+  // }, [sutraData, index]);
 
   useEffect(() => {
     buttonRef.current.focus();
 
     return async () => {
-      // await dataStore.set('sutra-index', {value: index});
-      await invoke('tesst_close');
+      const sutraSettings = JSON.stringify({title: sutraData.title, index: indexRef.current});
+      console.log(sutraSettings);
+      await invoke('persist_settings', {settings: sutraSettings});
     }
   }, []);
 
 
   const backToMenu = () => {
+
     dispatch(uiActions.setCurrentPage({page: 'index'}));
   }
 
@@ -47,6 +55,16 @@ const SutraScreen = ({initialIndex, dataStore}) => {
     return char?.character ?? 'None';
   }
 
+  const handleIncrementIndex = () => {
+    indexRef.current += 1;
+    dispatch(sutraActions.incrementSutraIndex());
+  }
+
+  const handleDecrementIndex = () => {
+    indexRef.current -= 1;
+    dispatch(sutraActions.decrementSutraIndex());
+  }
+
   return (
     <Box className="sutra-box">
 
@@ -60,13 +78,13 @@ const SutraScreen = ({initialIndex, dataStore}) => {
         </Box>
 
         <Box className="sutra-info">
-          <Button onClick={() => setIndex(index -1)} disabled={index === 0}>Previous</Button>
+          <Button onClick={handleDecrementIndex} disabled={index === 0}>Previous</Button>
           <Button
           variant="contained"
           color="primary"
           disabled={index === totalChars - 1}
           ref={buttonRef}
-          onClick={() => setIndex(index + 1)}
+          onClick={handleIncrementIndex}
         >
           Next Character
         </Button>

@@ -14,23 +14,18 @@ function App() {
   const dispatch = useDispatch();
   const page = useSelector((state) => state.ui.currentPage);
   const sutraTitles = useSelector((state) => state.sutra.sutraTitles);
-  const store = new Store('.settings.dat');
   const [sutraIndex, setSutraIndex] = useState(null);
 
   useEffect( () => {
     dispatch(fetchSutras());
   },[dispatch])
 
-  useEffect(() => {
-    const getSutraIndex = async () => {
-      const index = await store.get('sutra-index');
-      console.log("Sutra index fetched in app is", index);
-      if (!isEmpty(index)) {
-        setSutraIndex(index);
-      }
-    }
-    getSutraIndex().catch(console.error);
-  }, []);
+  // useEffect(() => {
+  //   const getSutraIndex = async () => {
+  //
+  //   }
+  //   getSutraIndex().catch(console.error);
+  // }, []);
 
   return (
     <>
@@ -41,7 +36,7 @@ function App() {
           <IndexScreen />
         }
         {page === 'sutra' &&
-            <SutraScreen dataStore={store} initialIndex={sutraIndex.value} />
+            <SutraScreen />
         }
         </Grid>
       </Grid>

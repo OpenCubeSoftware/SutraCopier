@@ -24,15 +24,6 @@ fn get_files() -> Vec<String>{
   file_list
 }
 
-// #[tauri::command]
-// fn tesst_close() {
-//     let time = get_time();
-//     let mut file = std::fs::File::create(format!("./{filename}.meow", filename=time)).expect("File creating failed");
-//     file.write_all("Meow meow meow ".as_bytes()).expect("write failed");
-//     file.write_all(time.to_string().as_bytes()).expect("second write failed");
-//     println!("data written to file");
-// }
-
 #[tauri::command]
 fn persist_settings(settings: String) {
     let project_dirs = ProjectDirs::from("tk", "opencube", "sutracopy").unwrap();
@@ -41,7 +32,7 @@ fn persist_settings(settings: String) {
         fs::create_dir_all(&conf_dir);
     }
     let mut file =
-        std::fs::File::create(&conf_dir.join("settings.sutracopy.conf")).expect("File creating failed");
+        std::fs::File::create(&conf_dir.join("settings.json")).expect("File creating failed");
     file.write_all(settings.as_bytes()).expect("Write failed");
 }
 

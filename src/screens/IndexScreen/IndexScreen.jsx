@@ -8,12 +8,28 @@ import {useDispatch, useSelector} from "react-redux";
 const IndexScreen = () => {
   const dispatch = useDispatch();
   const sutraTitles = useSelector((state) => state.sutra.sutraTitles);
+  // const sutraSettings = useSelector((state) => ({title: state.settingsSutra, index: state.settingsSutraIndex}));
+  const currentSutra = useSelector((state) => state.settingsSutra);
+  const currentIndex = useSelector((state) => state.settingsSutraIndex);
+  console.log("Sutra settings from indexscreen are: ", {currentSutra, currentIndex});
 
   const handleSelectSutra = (sutraTitle) => {
     dispatch(
       sutraActions.setSelectedSutra(
         {
-          selectedSutra: sutraTitle
+          selectedSutra: sutraTitle,
+        }
+      )
+    );
+    dispatch(uiActions.setCurrentPage({page: 'sutra'}));
+  }
+
+  const handleSelectSutraWithIndex = (sutraTitle, sutraIndex) => {
+    dispatch(
+      sutraActions.setSelectedSutraWithIndex(
+        {
+          selectedSutra: sutraTitle,
+          currentIndex: sutraIndex
         }
       )
     );
@@ -25,6 +41,10 @@ const IndexScreen = () => {
       <Box>
         <h4 className="font-fondamento heading">Sutra Copy Tool</h4>
         <p className="info">This program helps you to copy Buddhist sutras in Chinese by displaying one character at a time.</p>
+        {currentSutra && currentIndex !== 0 &&
+          <div className="resume" onClick={() => handleSelectSutraWithIndex(currentSutra, currentIndex)}>
+            <p className="info">Resume {currentSutra} from character {currentIndex +1}?</p></div>
+        }
         <p className="info">Available sutras:</p>
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
           {sutraTitles.map(s => (
@@ -33,11 +53,6 @@ const IndexScreen = () => {
       </Box>
     </Box>
   )
-}
-
-IndexScreen.propTypes = {
-  sutraTitles: PropTypes.array,
-  changePage: PropTypes.func,
 }
 
 export default IndexScreen;

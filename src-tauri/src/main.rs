@@ -7,9 +7,6 @@ use std::fs;
 use std::ffi::OsStr;
 use std::os::unix::ffi::OsStrExt;
 use std::format;
-use std::io::Write;
-use directories::ProjectDirs;
-use serde::{Deserialize, Serialize};
 
 #[tauri::command]
 fn get_files() -> Vec<String>{
@@ -24,21 +21,9 @@ fn get_files() -> Vec<String>{
   file_list
 }
 
-#[tauri::command]
-fn persist_settings(settings: String) {
-    let project_dirs = ProjectDirs::from("tk", "opencube", "sutracopy").unwrap();
-    let conf_dir = project_dirs.config_dir();
-    if !conf_dir.exists() {
-        fs::create_dir_all(&conf_dir);
-    }
-    let mut file =
-        std::fs::File::create(&conf_dir.join("settings.json")).expect("File creating failed");
-    file.write_all(settings.as_bytes()).expect("Write failed");
-}
-
 fn main() {
   tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![get_files, persist_settings])
+      .invoke_handler(tauri::generate_handler![get_files])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
 }

@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "sutra-copy-tool",
+    "productName": "Sutra Copy Tool",
     "version": "0.1.0"
   },
   "tauri": {
@@ -17,7 +17,7 @@
         "scope": ["$APP/*", "$DATA/*"]
       },
       "path": {
-        "all": true,
+        "all": true
       }
     },
     "bundle": {
@@ -44,7 +44,7 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": ["./sutras"],
       "shortDescription": "",
       "targets": "all",
       "windows": {

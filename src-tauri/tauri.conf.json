@@ -8,15 +8,19 @@
   },
   "package": {
     "productName": "Sutra Copy Tool",
-    "version": "0.1.0"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
+      "all": true,
       "fs": {
         "all": true,
-        "scope": ["$APP/*", "$DATA/*"]
+        "scope": ["$APP/*", "$DATA/*", "$APP", "$RESOURCE", "$RESOURCE/*"]
       },
       "path": {
+        "all": true
+      },
+      "window": {
         "all": true
       }
     },

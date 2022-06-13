@@ -1,32 +1,33 @@
-import {useEffect, useMemo, useRef} from "react";
+import {useEffect, useRef} from "react";
 import {Box, Button, Grid, Typography} from '@mui/material';
 import './SutraScreen.css';
 import {useSelector, useDispatch} from "react-redux";
-import {useState} from "react";
 import {uiActions} from "../../store/ui-slice.js";
 import PropTypes from "prop-types";
-import {invoke} from "@tauri-apps/api";
 import {sutraActions} from "../../store/sutra-slice.js";
-import {useEffectOnce, useUnmount} from "react-use";
+import {useEffectOnce} from "react-use";
 import {BaseDirectory, createDir, writeFile} from "@tauri-apps/api/fs";
+/*import {useState} from "react";
+import {invoke} from "@tauri-apps/api";*/
 
 const SutraScreen = () => {
   const sutraData = useSelector((state) => state.sutra.selectedSutraData);
-  const startingIndex = useSelector((state) => state.sutra.sutraIndex);
+  // const startingIndex = useSelector((state) => state.sutra.settingsSutraIndex);
   const totalChars = sutraData.data.length;
-  const [index, setIndex] = useState(startingIndex);
+  // const [index, setIndex] = useState(startingIndex);
+  const index = useSelector((state) => state.sutra.sutraIndex);
   const buttonRef = useRef(null);
   const dispatch = useDispatch();
-  const indexRef = useRef(startingIndex);
+  const indexRef = useRef(index);
 
   useEffectOnce(() => {
     createDataFolder();
     buttonRef.current.focus();
-  });
 
-  useEffect(() => {
-    createDataFile();
-  }, [index])
+    return () => {
+      createDataFile();
+    }
+  });
 
   const createDataFolder = async () => {
     try {
@@ -81,13 +82,16 @@ const SutraScreen = () => {
   const handleIncrementIndex = () => {
     buttonRef.current.focus();
     indexRef.current += 1;
-    setIndex(index + 1);
+    // setIndex(index + 1);
+    dispatch(sutraActions.incrementSutraIndex());
   }
 
   const handleDecrementIndex = () => {
     indexRef.current -= 1;
-    setIndex(index - 1);
+    // setIndex(index - 1);
+    dispatch(sutraActions.decrementSutraIndex());
   }
+
 
   return (
     <Box className="sutra-box">

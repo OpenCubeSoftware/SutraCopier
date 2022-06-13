@@ -1,17 +1,16 @@
-import {Box, Button, Grid, Typography} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {uiActions} from "../../store/ui-slice.js";
 import {sutraActions} from "../../store/sutra-slice.js";
 import './IndexScreen.css';
-import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";
+// import PropTypes from "prop-types";
 
 const IndexScreen = () => {
   const dispatch = useDispatch();
   const sutraTitles = useSelector((state) => state.sutra.sutraTitles);
-  // const sutraSettings = useSelector((state) => ({title: state.settingsSutra, index: state.settingsSutraIndex}));
   const currentSutra = useSelector((state) => state.settingsSutra);
   const currentIndex = useSelector((state) => state.settingsSutraIndex);
-  console.log("Sutra settings from indexscreen are: ", {currentSutra, currentIndex});
+  // const sutraSettings = useSelector((state) => ({title: state.settingsSutra, index: state.settingsSutraIndex}));
 
   const handleSelectSutra = (sutraTitle) => {
     dispatch(

@@ -1,7 +1,7 @@
 import {sutraActions} from "./sutra-slice.js";
+import {invoke} from "@tauri-apps/api";
 import {resourceDir} from "@tauri-apps/api/path";
 import {readDir, readTextFile} from "@tauri-apps/api/fs";
-// import {invoke} from "@tauri-apps/api";
 
 export const fetchSutras = () => {
   console.log("FetchSutras method started")

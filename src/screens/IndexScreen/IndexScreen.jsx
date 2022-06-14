@@ -3,14 +3,28 @@ import {uiActions} from "../../store/ui-slice.js";
 import {sutraActions} from "../../store/sutra-slice.js";
 import './IndexScreen.css';
 import {useDispatch, useSelector} from "react-redux";
+import {useEffectOnce} from "react-use";
+import {appWindow} from "@tauri-apps/api/window";
 // import PropTypes from "prop-types";
 
 const IndexScreen = () => {
   const dispatch = useDispatch();
   const sutraTitles = useSelector((state) => state.sutra.sutraTitles);
+  const sutras = useSelector((state) => state.sutra.sutras);
+  console.log("Sutras from index screen are: ", sutras);
   const currentSutra = useSelector((state) => state.settingsSutra);
   const currentIndex = useSelector((state) => state.settingsSutraIndex);
-  // const sutraSettings = useSelector((state) => ({title: state.settingsSutra, index: state.settingsSutraIndex}));
+  const sutraSettings = useSelector((state) => ({title: state.settingsSutra, index: state.settingsSutraIndex}));
+
+  useEffectOnce(() => {
+    const unlisten = appWindow.listen('tauri://close-requested', ({event, payload}) => {
+      appWindow.close();
+    });
+
+    return () => {
+      unlisten.then(f => f());
+    }
+  })
 
   const handleSelectSutra = (sutraTitle) => {
     dispatch(

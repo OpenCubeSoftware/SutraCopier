@@ -7,6 +7,8 @@ use std::fs;
 use std::ffi::OsStr;
 use std::os::unix::ffi::OsStrExt;
 use std::format;
+use std::path;
+use std::path::PathBuf;
 use directories::ProjectDirs;
 
 #[tauri::command]
@@ -23,6 +25,8 @@ fn get_files() -> Vec<String> {
     });
   file_list
 }
+
+
 
 fn main() {
   tauri::Builder::default()

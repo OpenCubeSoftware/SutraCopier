@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Box, Button, Grid, Typography} from '@mui/material';
 import './SutraScreen.css';
 import {useSelector, useDispatch} from "react-redux";
@@ -6,59 +6,144 @@ import {uiActions} from "../../store/ui-slice.js";
 import PropTypes from "prop-types";
 import {sutraActions} from "../../store/sutra-slice.js";
 import {useEffectOnce} from "react-use";
-import {BaseDirectory, createDir, writeFile} from "@tauri-apps/api/fs";
+import {BaseDirectory, createDir, readTextFile, writeFile} from "@tauri-apps/api/fs";
+import {appWindow} from "@tauri-apps/api/window";
+import {dialog} from "@tauri-apps/api";
+import {isEmpty} from "lodash";
+import SutraModal from "../../components/SutraModal/SutraModal";
 /*import {useState} from "react";
 import {invoke} from "@tauri-apps/api";*/
 
 const SutraScreen = () => {
   const sutraData = useSelector((state) => state.sutra.selectedSutraData);
-  // const startingIndex = useSelector((state) => state.sutra.settingsSutraIndex);
+  const settingsSutras = useSelector((state) => state.sutra.settingsSutras)
   const totalChars = sutraData.data.length;
-  // const [index, setIndex] = useState(startingIndex);
+  const [savedIndex, setSavedIndex] = useState(0);
   const index = useSelector((state) => state.sutra.sutraIndex);
+  const [openModal, setOpenModal] = useState(false);
   const buttonRef = useRef(null);
   const dispatch = useDispatch();
   const indexRef = useRef(index);
 
-  useEffectOnce(() => {
-    createDataFolder();
-    buttonRef.current.focus();
+  useEffectOnce(()=> {
 
-    return () => {
-      createDataFile();
+    const setSutraIndex = (sutraIndex) => {
+      setSavedIndex(sutraIndex);
+      setOpenModal(true);
     }
+    console.log(settingsSutras);
+    const currentSutraFromSettings = settingsSutras.find((s) => s.title === sutraData.title);
+    if (!isEmpty(currentSutraFromSettings)) {
+      setSutraIndex(currentSutraFromSettings.sutraIndex);
+    }
+  })
+
+  useEffectOnce(() => {
+    buttonRef.current.focus();
   });
 
-  const createDataFolder = async () => {
+  const requestSave = (closeWindow) => {
+    dialog.ask('Do you want to save your progress?').then((res) => {
+      console.log("dialog result is", res);
+      if (res) {
+        saveData().then((res) => {
+          if (res) {
+            dialog.message("Data saved").then(() => {
+              if (closeWindow) {
+                return appWindow.close();
+              } else {
+                dispatch(uiActions.setCurrentPage({page: 'index'}));
+              }
+            });
+          } else {
+            dialog.ask("Saving data failed. Do you want to quit anyway?").then((res) => {
+              if (res) {
+                if (closeWindow) {
+                  return appWindow.close();
+                } else {
+                  dispatch(uiActions.setCurrentPage({page: 'index'}));
+                }
+              }
+            })
+          }
+        });
+      } else {
+        return appWindow.close();
+      }
+    })
+  }
+
+
+
+  useEffectOnce(() => {
+    const unlisten = appWindow.listen('tauri://close-requested', ({event, payload}) => {
+      requestSave(true);
+    });
+
+    return () => {
+      unlisten.then(f => f());
+    }
+  })
+
+  const readSettingsFile = async () => {
     try {
-      await createDir("sutracopy", {
-        dir: BaseDirectory.Data,
-        recursive: true,
-      });
+      const settingsData = await readTextFile(`sutracopy/sutrasettings.json`, {dir: BaseDirectory.Data});
+      return JSON.parse(settingsData);
     } catch (e) {
-      console.error(e);
+      console.error("error reading settings file", e);
+      return undefined;
     }
   }
 
-  const createDataFile = async () => {
+  // const createDataFolder = async () => {
+  //   try {
+  //     await createDir("sutracopy", {
+  //       dir: BaseDirectory.Data,
+  //       recursive: true,
+  //     });
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // }
+
+  const saveData = async () => {
     try {
-      await writeFile(
+      let settingsData = await readSettingsFile();
+      if (isEmpty(settingsData)) {
+        console.log("Settings file is empty")
+        settingsData = [];
+      }
+      const sutraObject = settingsData.find((s) => s.title === sutraData.title);
+      if (!isEmpty(sutraObject)) {
+        sutraObject.sutraIndex = indexRef.current;
+      } else {
+        settingsData.push({title: sutraData.title, sutraIndex: indexRef.current})
+      }
+      console.log("Settings data is: ", settingsData);
+      writeFile(
         {
-          contents: JSON.stringify({title: sutraData.title, sutraIndex: indexRef.current}),
-          path: `./sutracopy/sutracopy.settings.json`,
+          contents: JSON.stringify(settingsData),
+          path: `sutracopy/sutrasettings.json`,
         },
         {
           dir: BaseDirectory.Data,
         }
-      );
+      ).then(() => {
+        console.log("reached then of writefile")
+      }).catch((err) => {
+        console.log("fell into cattch block");
+        console.error(err);
+      });
+      return true;
     } catch (e) {
-      console.error(e);
+      console.error("error writing file", e);
+      return false;
     }
   };
 
   const backToMenu = () => {
-
-    dispatch(uiActions.setCurrentPage({page: 'index'}));
+   requestSave(false);
+    // dispatch(uiActions.setCurrentPage({page: 'index'}));
   }
 
   const getSutraCharacter = () => {
@@ -92,24 +177,32 @@ const SutraScreen = () => {
     dispatch(sutraActions.decrementSutraIndex());
   }
 
+  const setNewSutraIndex = () => {
+    dispatch(sutraActions.setSutraIndex({index: savedIndex}));
+    indexRef.current = savedIndex;
+    setOpenModal(false);
+  }
 
   return (
     <Box className="sutra-box">
 
       <Box className="inner-sutra-box">
+        {savedIndex !== 0 && <SutraModal handleOk={setNewSutraIndex} isOpen={openModal} prevIndex={savedIndex} sutraTitle={sutraData.title}/>}
         <h2 className="font-fondamento sutra-title-display">{sutraData.title}</h2>
         <h1 className="font-face-kt sutra-char">{getSutraCharacter()}</h1>
         <Box className="sutra-info">
           <Box className="prev-next">
             <span className="index-display">Previous:</span>
-            <span className={getPrevNextSutraCharacter('prev') === 'None' ? "index-display pl" :"char-display font-face-kt"}>
+            <span
+              className={getPrevNextSutraCharacter('prev') === 'None' ? "index-display pl" : "char-display font-face-kt"}>
               {getPrevNextSutraCharacter('prev')}
             </span>
           </Box>
           <span className="index-display">{index + 1}/{totalChars}</span>
           <Box className="prev-next">
             <span className="index-display">Next: </span>
-            <span className={getPrevNextSutraCharacter('next') === 'None' ? "index-display pl" :"char-display font-face-kt"}> {getPrevNextSutraCharacter('next')}
+            <span
+              className={getPrevNextSutraCharacter('next') === 'None' ? "index-display pl" : "char-display font-face-kt"}> {getPrevNextSutraCharacter('next')}
             </span>
           </Box>
         </Box>

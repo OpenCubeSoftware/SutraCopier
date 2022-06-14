@@ -8,9 +8,7 @@ const sutraSlice = createSlice({
     selectedSutra: '',
     selectedSutraData: {},
     sutraIndex: 0,
-    settingsSutra: '',
-    settingsSutraIndex: 0,
-    useSettingsSutra: false
+    settingsSutras: []
   },
   reducers: {
     setSutraData(state, action) {
@@ -31,8 +29,7 @@ const sutraSlice = createSlice({
       state.sutraIndex = action.payload.index;
     },
     setSutraSettings(state, action) {
-      state.settingsSutra = action.payload.sutraTitle;
-      state.settingsSutraIndex = action.payload.sutraIndex;
+      state.settingsSutras = action.payload.settings;
     },
     useSutraFromSettings(state, action) {
       state.useSettingsSutra = true;

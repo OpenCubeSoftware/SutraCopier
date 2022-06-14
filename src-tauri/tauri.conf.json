@@ -7,12 +7,25 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "sutra-copy-tool",
-    "version": "0.1.0"
+    "productName": "Sutra Copy Tool",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "fs": {
+        "all": true,
+        "scope": ["$APP/*", "$DATA/*", "$DATA", "$APP", "$RESOURCE", "$RESOURCE/*"]
+      },
+      "path": {
+        "all": true
+      },
+      "window": {
+        "all": true
+      },
+      "dialog": {
+        "all": true
+      }
     },
     "bundle": {
       "active": true,
@@ -29,7 +42,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "tk.opencube.sutracopy",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
